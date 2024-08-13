@@ -5,8 +5,6 @@ use std::fmt::{Arguments, Display, Formatter};
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use std::str::FromStr;
 
-pub use super::macros::with_dollar_sign;
-
 pub struct FastIO<I: Read, O: Write> {
     token_buf: Vec<String>,
     reader: BufReader<I>,

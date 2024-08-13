@@ -1,4 +1,4 @@
-#![allow(unused_imports, unused_macros)]
+#![allow(unused_imports)]
 
 use std::array;
 use std::fmt::Display;
@@ -71,22 +71,27 @@ impl<I: Read, O: Write> FastIO<I, O> {
 
 #[macro_export]
 macro_rules! with_fast_io {
-    ($name:ident, $input:ident, $output:ident) => {
+    ($name:ident, $input:expr, $output:expr) => {
         #[allow(unused_mut)]
         let mut $name = FastIO::new($input, $output);
 
         with_dollar_sign! {
             ($d:tt) => {
+                #[allow(unused_macros)]
                 macro_rules! cout_fmt {
                     ($d fmt:expr, $d($d arg:expr),*) => {
                         $name.write(&format!($d fmt, $d($d arg),*));
                     }
                 }
+
+                #[allow(unused_macros)]
                 macro_rules! coutln_fmt {
                     ($d fmt:expr, $d($d arg:expr),*) => {
                         $name.write_line(&format!($d fmt, $d($d arg),*));
                     }
                 }
+
+                #[allow(unused_macros)]
                 macro_rules! to_format {
                     ($d cur:expr) => {
                         "{}"
@@ -95,11 +100,15 @@ macro_rules! with_fast_io {
                         concat!(to_format!($d cur), to_format!($d($d rest),*))
                     };
                 }
+
+                #[allow(unused_macros)]
                 macro_rules! cout {
                     ($d($d arg:expr),*) => {
                         cout_fmt!(to_format!($d($d arg),*), $d($d arg),*);
                     }
                 }
+
+                #[allow(unused_macros)]
                 macro_rules! coutln {
                     ($d($d arg:expr),*) => {
                         coutln_fmt!(to_format!($d($d arg),*), $d($d arg),*);

@@ -1,6 +1,6 @@
 use crate::math::modint::ModInt64;
 use crate::misc::fluent::FluentIterator;
-use crate::rand::get_default_rand;
+use crate::rand::rand::Rand;
 use crate::rand::traits::RandNextRanged;
 use std::array;
 use std::cmp::Ordering;
@@ -26,7 +26,7 @@ impl<const N: usize> Hasher<N> {
     }
 
     pub fn with_random_mul(max_len: usize) -> Self {
-        let mut rand = get_default_rand();
+        let mut rand = Rand::default();
         Self::new(
             max_len,
             array::from_fn(|_| rand.next_ranged(HASH_MUL_MIN, HASH_MUL_MAX)),

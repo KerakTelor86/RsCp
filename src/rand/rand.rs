@@ -1,3 +1,4 @@
+use crate::rand::rng::wyrand::WyRand;
 use super::rng::traits::Rng;
 use super::traits::{RandNext, RandNextRanged};
 
@@ -8,6 +9,12 @@ where
     rng: R,
     buffer_left: usize,
     buffer: [u8; B],
+}
+
+impl Rand<WyRand, 8> {
+    pub fn default() -> Self {
+        Rand::new(WyRand::with_time_seed())
+    }
 }
 
 impl<R, const B: usize> Rand<R, B>
@@ -180,5 +187,11 @@ mod test {
         };
 
         assert_eq!(to_counts(arr), to_counts(copy));
+    }
+
+    #[test]
+    fn test_init_default() {
+        let mut rand = Rand::default();
+        let _output: u64 = rand.next();
     }
 }

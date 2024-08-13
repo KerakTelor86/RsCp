@@ -6,3 +6,6 @@ Cargo.lock
 **/*.rs.bk
 
 tarpaulin-report.html
+
+.idea
+RsCp.iml

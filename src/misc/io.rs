@@ -70,11 +70,8 @@ impl<I: Read, O: Write> FastIO<I, O> {
 }
 
 #[macro_export]
-macro_rules! with_fast_io {
-    ($name:ident, $input:expr, $output:expr) => {
-        #[allow(unused_mut)]
-        let mut $name = FastIO::new($input, $output);
-
+macro_rules! with_cout {
+    ($name:ident) => {
         with_dollar_sign! {
             ($d:tt) => {
                 #[allow(unused_macros)]
@@ -119,7 +116,7 @@ macro_rules! with_fast_io {
     }
 }
 
-pub use with_fast_io;
+pub use with_cout;
 
 #[cfg(test)]
 mod test {
@@ -144,7 +141,8 @@ mod test {
         );
         let output = Vec::new();
 
-        with_fast_io!(io, input, output);
+        let mut io = FastIO::new(input, output);
+        with_cout!(io);
 
         let [a, b] = io.read_array::<i32, 2>();
         assert_eq!(a, 69);

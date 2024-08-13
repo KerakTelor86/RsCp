@@ -1,9 +1,11 @@
 #![allow(unused_imports, unused_macros)]
 
 use std::array;
-use std::fmt::{Arguments, Display, Formatter};
+use std::fmt::Display;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use std::str::FromStr;
+
+pub use crate::misc::macros::with_dollar_sign;
 
 pub struct FastIO<I: Read, O: Write> {
     token_buf: Vec<String>,
@@ -67,9 +69,53 @@ impl<I: Read, O: Write> FastIO<I, O> {
     }
 }
 
+#[macro_export]
+macro_rules! with_fast_io {
+    ($name:ident, $input:ident, $output:ident) => {
+        #[allow(unused_mut)]
+        let mut $name = FastIO::new($input, $output);
+
+        with_dollar_sign! {
+            ($d:tt) => {
+                macro_rules! cout_fmt {
+                    ($d fmt:expr, $d($d arg:expr),*) => {
+                        $name.write(&format!($d fmt, $d($d arg),*));
+                    }
+                }
+                macro_rules! coutln_fmt {
+                    ($d fmt:expr, $d($d arg:expr),*) => {
+                        $name.write_line(&format!($d fmt, $d($d arg),*));
+                    }
+                }
+                macro_rules! to_format {
+                    ($d cur:expr) => {
+                        "{}"
+                    };
+                    ($d cur:expr, $d($d rest:expr),*) => {
+                        concat!(to_format!($d cur), to_format!($d($d rest),*))
+                    };
+                }
+                macro_rules! cout {
+                    ($d($d arg:expr),*) => {
+                        cout_fmt!(to_format!($d($d arg),*), $d($d arg),*);
+                    }
+                }
+                macro_rules! coutln {
+                    ($d($d arg:expr),*) => {
+                        coutln_fmt!(to_format!($d($d arg),*), $d($d arg),*);
+                    }
+                }
+            }
+        }
+    }
+}
+
+pub use with_fast_io;
+
 #[cfg(test)]
 mod test {
     use std::io::BufReader;
+    use std::io::{stdin, stdout};
 
     use super::*;
 
@@ -89,7 +135,7 @@ mod test {
         );
         let output = Vec::new();
 
-        let mut io = FastIO::new(input, output);
+        with_fast_io!(io, input, output);
 
         let [a, b] = io.read_array::<i32, 2>();
         assert_eq!(a, 69);
@@ -115,10 +161,10 @@ mod test {
             ]
         );
 
-        io.write("test: ");
-        io.write_line("newline here");
-        io.write_line(&format!("word: {word}"));
-        io.write_line(&format!("float: {:.04}", float));
+        cout!("test: ");
+        coutln!("newline here");
+        coutln_fmt!("word: {}", word);
+        coutln_fmt!("float: {:.04}", float);
 
         let vec = io.writer.into_inner().unwrap();
         assert_eq!(vec, b"test: newline here\nword: string\nfloat: 420.6900\n");

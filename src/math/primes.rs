@@ -31,13 +31,13 @@ impl<R: RandNextRanged<i64>> PrimeUtil<R> {
                 return false;
             }
         }
-        return true;
+        true
     }
 
     pub fn factorize(&mut self, n: i64) -> Vec<i64> {
         let mut res = Vec::new();
         self.pollard_rho(n, &mut res);
-        return res.into_iter().sorted().collect();
+        res.into_iter().sorted().collect()
     }
 
     fn mod_mul(&self, a: i64, b: i64, m: i64) -> i64 {
@@ -52,7 +52,7 @@ impl<R: RandNextRanged<i64>> PrimeUtil<R> {
             return self.mod_mul(a, self.pow(a, x - 1, m), m);
         }
         let temp = self.pow(a, x / 2, m);
-        return self.mod_mul(temp, temp, m);
+        self.mod_mul(temp, temp, m)
     }
 
     fn miller_rabin(&self, n: i64, a: i64, d: i64, s: i32) -> bool {
@@ -66,7 +66,7 @@ impl<R: RandNextRanged<i64>> PrimeUtil<R> {
                 return false;
             }
         }
-        return true;
+        true
     }
 
     fn f(&self, x: i64, b: i64, n: i64) -> i64 {

@@ -26,7 +26,7 @@ where
         let Some(init) = self.next() else {
             return Vec::new().into_iter();
         };
-        return self.running_fold(init, predicate);
+        self.running_fold(init, predicate)
     }
 
     fn group<K: Eq + Hash>(
@@ -42,7 +42,7 @@ where
             .into_iter()
             .map(|(key, value)| (key, value.into_iter()))
             .collect();
-        return res.into_iter();
+        res.into_iter()
     }
 
     fn shuffled<const B: usize, R: Rng<B>>(
@@ -51,7 +51,7 @@ where
     ) -> IntoIter<Self::Item> {
         let mut vec: Vec<_> = self.collect();
         rand.shuffle(&mut vec);
-        return vec.into_iter();
+        vec.into_iter()
     }
 
     fn sorted_by(
@@ -60,7 +60,7 @@ where
     ) -> IntoIter<Self::Item> {
         let mut vec: Vec<_> = self.collect();
         vec.sort_by(compare);
-        return vec.into_iter();
+        vec.into_iter()
     }
 
     fn sorted_by_key<K: Ord>(
@@ -69,7 +69,7 @@ where
     ) -> IntoIter<Self::Item> {
         let mut vec: Vec<_> = self.collect();
         vec.sort_by_key(key_fn);
-        return vec.into_iter();
+        vec.into_iter()
     }
 }
 
@@ -80,7 +80,7 @@ where
     fn sorted(self) -> IntoIter<Self::Item> {
         let mut vec: Vec<_> = self.collect();
         vec.sort();
-        return vec.into_iter();
+        vec.into_iter()
     }
 }
 
@@ -103,7 +103,7 @@ where
         for item in self {
             result.push(predicate(result.last().unwrap().clone(), item));
         }
-        return result.into_iter();
+        result.into_iter()
     }
 }
 

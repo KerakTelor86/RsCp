@@ -56,7 +56,7 @@ impl<I: Read, O: Write> FastIO<I, O> {
         if input.ends_with('\n') {
             input.pop();
         }
-        return input;
+        input
     }
 
     pub fn write(&mut self, out: &str) {

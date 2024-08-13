@@ -61,7 +61,7 @@ where
             merge_lazy,
         );
         result.build_from_vec(&source, 0, 0, source.len() - 1);
-        return result;
+        result
     }
 
     pub fn len(&self) -> usize {
@@ -180,7 +180,7 @@ where
         let (lc, rc, m) = compute_indices(idx, l, r);
         let lc_res = self.query_impl(u, v, lc, l, m);
         let rc_res = self.query_impl(u, v, rc, m + 1, r);
-        return (self.op_value)(lc_res, rc_res);
+        (self.op_value)(lc_res, rc_res)
     }
 }
 

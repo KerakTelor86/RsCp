@@ -92,14 +92,14 @@ pub fn get_ordered_cyclic_shifts<T: Ord>(
         k *= 2;
     }
 
-    return order;
+    order
 }
 
 pub fn get_suffix_array(s: &str) -> Vec<usize> {
     let mut res =
         get_ordered_cyclic_shifts(s.as_bytes().iter().chain(once(&b'$')));
     res.retain(|&x| x != s.len());
-    return res;
+    res
 }
 
 pub fn get_lcp_array(s: &str, suffix_array: &[usize]) -> Vec<usize> {
@@ -125,7 +125,7 @@ pub fn get_lcp_array(s: &str, suffix_array: &[usize]) -> Vec<usize> {
             k -= 1;
         }
     }
-    return lcp;
+    lcp
 }
 
 #[cfg(test)]

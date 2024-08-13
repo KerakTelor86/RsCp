@@ -19,7 +19,7 @@ impl<T: Eq + Hash> FromIterator<T> for LiveCompressor<T> {
     fn from_iter<U: IntoIterator<Item = T>>(iter: U) -> Self {
         let mut result = LiveCompressor::new();
         result.insert_iter(iter);
-        return result;
+        result
     }
 }
 

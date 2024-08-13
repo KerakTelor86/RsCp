@@ -10,7 +10,7 @@ pub fn edge_list_to_adj_list(
         }
         res[u].push(v);
     }
-    return res;
+    res
 }
 
 pub fn edge_list_to_adj_list_weighted<W: Clone>(
@@ -25,7 +25,7 @@ pub fn edge_list_to_adj_list_weighted<W: Clone>(
         }
         res[u].push((v, w));
     }
-    return res;
+    res
 }
 
 #[cfg(test)]

@@ -32,7 +32,7 @@ where
             self.fill_buffer();
         }
         self.buffer_left -= 1;
-        return self.buffer[self.buffer_left];
+        self.buffer[self.buffer_left]
     }
 
     pub fn next_ne_bytes<const N: usize>(&mut self) -> [u8; N] {
@@ -40,7 +40,7 @@ where
         for i in 0..N {
             res[i] = self.next_byte();
         }
-        return res;
+        res
     }
 }
 

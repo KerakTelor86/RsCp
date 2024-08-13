@@ -6,5 +6,5 @@ pub fn compute_indices(
     let m = (l + r) / 2;
     let lc = idx + 1;
     let rc = idx + (m - l + 1) * 2;
-    return (lc, rc, m);
+    (lc, rc, m)
 }

@@ -32,7 +32,7 @@ where
         let source: Vec<_> = iter.into_iter().collect();
         let mut result = Self::new(source.len(), nil, operation);
         result.build_from_vec(&source, 0, 0, source.len() - 1);
-        return result;
+        result
     }
 
     pub fn len(&self) -> usize {
@@ -120,10 +120,10 @@ where
             return self.store[idx].clone();
         }
         let (lc, rc, m) = compute_indices(idx, l, r);
-        return (self.operation)(
+        (self.operation)(
             self.query_impl(u, v, lc, l, m),
             self.query_impl(u, v, rc, m + 1, r),
-        );
+        )
     }
 }
 

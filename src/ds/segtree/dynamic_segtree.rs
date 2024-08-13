@@ -97,7 +97,7 @@ where
             self.get_value(&cur.left),
             self.get_value(&cur.right),
         );
-        return Some(cur);
+        Some(cur)
     }
 
     fn update_impl(
@@ -126,7 +126,7 @@ where
             self.get_value(&cur.left),
             self.get_value(&cur.right),
         );
-        return Some(cur);
+        Some(cur)
     }
 
     fn query_impl(
@@ -147,10 +147,10 @@ where
             return cur.value.clone();
         }
         let m = (l + r) / 2;
-        return (self.operation)(
+        (self.operation)(
             self.query_impl(u, v, &cur.left, l, m),
             self.query_impl(u, v, &cur.right, m + 1, r),
-        );
+        )
     }
 }
 

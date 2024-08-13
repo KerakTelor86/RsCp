@@ -46,7 +46,7 @@ pub trait RollingHasher<const N: usize>: Sized {
             }
         }
         res.len = s.len();
-        return res;
+        res
     }
 }
 

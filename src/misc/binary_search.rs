@@ -40,7 +40,7 @@ pub fn tf_last_t<T: BinarySearchable>(
         }
         jump /= 2.into();
     }
-    return Some(pos);
+    Some(pos)
 }
 
 pub fn tf_first_f<T: BinarySearchable>(

@@ -69,7 +69,7 @@ impl LCA {
         } else {
             self.sparse.query(r, l)
         };
-        return (lca, self.level[u] + self.level[v] - lca_level * 2);
+        (lca, self.level[u] + self.level[v] - lca_level * 2)
     }
 
     pub fn get_lca(&self, u: usize, v: usize) -> usize {

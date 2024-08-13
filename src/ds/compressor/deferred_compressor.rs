@@ -26,7 +26,7 @@ impl<T: Ord> FromIterator<T> for PendingCompressor<T> {
     fn from_iter<U: IntoIterator<Item = T>>(iter: U) -> Self {
         let mut result = PendingCompressor::new();
         result.insert_iter(iter);
-        return result;
+        result
     }
 }
 

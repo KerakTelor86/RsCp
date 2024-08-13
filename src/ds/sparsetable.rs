@@ -60,7 +60,7 @@ where
                 cur_idx += 1 << i;
             }
         }
-        return ans;
+        ans
     }
 
     pub fn len(&self) -> usize {

@@ -50,7 +50,7 @@ mod test {
                 }
                 let temp = vector[idx];
                 vector[idx] = target[idx];
-                return temp + recurse!(idx + 1);
+                temp + recurse!(idx + 1)
             }
         };
 

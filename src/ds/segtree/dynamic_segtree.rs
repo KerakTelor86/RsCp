@@ -33,7 +33,7 @@ where
     pub fn new(size: usize, nil: T, operation: F) -> Self {
         Self {
             size,
-            nil: nil.clone(),
+            nil,
             operation,
             root: None,
         }

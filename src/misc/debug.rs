@@ -1,14 +1,6 @@
 #[macro_export]
 macro_rules! debug {
-    (with_io($io:ident) $body:block) => {
-        #[cfg(feature = "local")]
-        {
-            $io.write("\u{001b}[32m");
-            $body;
-            $io.write("\u{001b}[0m");
-        }
-    };
-    (without_io() $body:block) => {
+    ($body:block) => {
         #[cfg(feature = "local")]
         {
             $body;
@@ -16,4 +8,17 @@ macro_rules! debug {
     };
 }
 
+#[macro_export]
+macro_rules! debug_highlight {
+    ($io:ident, $body:block) => {
+        #[cfg(feature = "local")]
+        {
+            $io.write("\u{001b}[32m");
+            $body;
+            $io.write("\u{001b}[0m");
+        }
+    };
+}
+
 pub use debug;
+pub use debug_highlight;

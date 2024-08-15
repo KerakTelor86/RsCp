@@ -31,13 +31,14 @@ pub use with_dollar_sign;
 
 // Ref:
 // https://codeforces.com/blog/entry/103794?#comment-921890
-pub use std::cell::UnsafeCell;
 #[macro_export]
 macro_rules! rec_lambda {
     (
-        |$y:ident: Self $(, $param:ident: $param_t:ty)*| -> $ret:ty
+        |$rec:ident: Self $(, $param:ident: $param_t:ty)*| -> $ret:ty
         $body:block
     ) => {{
+        use std::cell::UnsafeCell; // Macro-scoped import
+
         trait Callable {
             fn call(&mut self, $($param: $param_t),*) -> $ret;
         }
@@ -64,9 +65,9 @@ macro_rules! rec_lambda {
         }
 
         |$($param: $param_t,)*| {
-            let mut lambda = Lambda::new(|$y, $($param: $param_t),*| {
-                let mut $y = |$($param: $param_t),*| {
-                    $y.call($($param),*)
+            let mut lambda = Lambda::new(|$rec, $($param: $param_t),*| {
+                let mut $rec = |$($param: $param_t),*| {
+                    $rec.call($($param),*)
                 };
                 $body
             });

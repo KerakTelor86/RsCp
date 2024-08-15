@@ -1,10 +1,17 @@
 #[macro_export]
 macro_rules! ndvec {
-    ($init:expr; $dim:expr) => {
-        vec![$init; $dim]
+    ([$($tokens:tt)+]) => {
+        Vec<ndvec![$($tokens)*]>
     };
-    ($init:expr; $cur_dim:expr, $($rest_dim:expr),*) => {
-        vec![ndvec![$init; $($rest_dim),*]]
+    ($type:ty) => {
+        Vec<$type>
+    };
+
+    ($init:expr; ($cur_dim:expr, $($rest_dim:expr),*)) => {
+        vec![ndvec![$init; ($($rest_dim),*)]; $cur_dim]
+    };
+    ($init:expr; ($dim:expr)) => {
+        vec![$init; $dim]
     };
 }
 

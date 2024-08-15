@@ -29,32 +29,48 @@ macro_rules! with_dollar_sign {
 
 pub use with_dollar_sign;
 
+// Ref:
+// https://codeforces.com/blog/entry/103794?#comment-921890
+pub use std::cell::UnsafeCell;
 #[macro_export]
 macro_rules! rec_lambda {
     (
-        [$($immut_cap:ident: $immut_t:ty),*][$($mut_cap:ident: $mut_t:ty),*](
-            $($param:ident: $param_t:ty),*
-        ) -> $ret:ty $body:block
+        |$y:ident: Self $(, $param:ident: $param_t:ty)*| -> $ret:ty
+        $body:block
     ) => {{
-        fn lambda(
-            $($immut_cap: &$immut_t,)*
-            $($mut_cap: &mut $mut_t,)*
-            $($param: $param_t,)*
-        ) -> $ret {
-            with_dollar_sign! {
-                ($d:tt) => {
-                    macro_rules! recurse {
-                        ($d($d arg:expr),*) => {
-                            lambda($($immut_cap,)* $($mut_cap,)* $d($d arg,)*)
-                        }
-                    }
+        trait Callable {
+            fn call(&mut self, $($param: $param_t),*) -> $ret;
+        }
+
+        struct Lambda<F: FnMut(&mut dyn Callable, $($param_t),*) -> $ret> {
+            func: UnsafeCell<F>,
+        }
+
+        impl<F: FnMut(&mut dyn Callable, $($param_t),*) -> $ret> Lambda<F> {
+            fn new(func: F) -> Self {
+                Self {
+                    func: UnsafeCell::new(func),
                 }
             }
-            $body
+        }
+
+        impl<
+            F: FnMut(&mut dyn Callable, $($param_t),*) -> $ret
+        > Callable for Lambda<F> {
+            fn call(&mut self, $($param: $param_t),*) -> $ret {
+                let func = self.func.get();
+                unsafe { (*func)(self, $($param),*) }
+            }
         }
 
         |$($param: $param_t,)*| {
-            lambda($(&$immut_cap,)* $(&mut $mut_cap,)* $($param,)*)
+            let mut lambda = Lambda::new(|$y, $($param: $param_t),*| {
+                let mut $y = |$($param: $param_t),*| {
+                    $y.call($($param),*)
+                };
+                $body
+            });
+            lambda.call($($param),*)
         }
     }};
 }
@@ -97,13 +113,13 @@ mod test {
         let mut vector = vec![1, 2, 3, 4, 5];
 
         let mut test_sum_and_set = rec_lambda! {
-            [target: Vec<i32>][vector: Vec<i32>](idx: usize) -> i32 {
+            |rec: Self, idx: usize| -> i32 {
                 if idx == vector.len() {
                     return 0;
                 }
                 let temp = vector[idx];
                 vector[idx] = target[idx];
-                temp + recurse!(idx + 1)
+                temp + rec(idx + 1)
             }
         };
 

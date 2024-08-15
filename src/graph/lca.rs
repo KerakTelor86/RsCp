@@ -23,13 +23,8 @@ impl LCA {
         let mut level = vec![0; num_vertices];
         let mut order = Vec::new();
 
-        let mut dfs = rec_lambda! {
-            [adj_list: Vec<Vec<usize>>]
-            [
-                t_in: Vec<usize>, t_out: Vec<usize>,
-                level: Vec<usize>, order: Vec<usize>
-            ]
-            (pos: usize, last: usize, depth: usize) -> () {
+        let mut dfs = rec_lambda!(
+            |rec: Self, pos: usize, last: usize, depth: usize| -> () {
                 t_in[pos] = order.len();
                 t_out[pos] = order.len();
                 level[pos] = depth;
@@ -39,13 +34,13 @@ impl LCA {
                     if child == last {
                         continue;
                     }
-                    recurse!(child, pos, depth + 1);
+                    rec(child, pos, depth + 1);
 
                     t_out[pos] = order.len();
                     order.push(pos);
                 }
             }
-        };
+        );
         dfs(root, num_vertices, 0);
 
         let level_iter: Vec<_> = order.iter().map(|&x| level[x]).collect();

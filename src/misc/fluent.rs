@@ -45,6 +45,21 @@ where
         res.into_iter()
     }
 
+    fn group_count<K: Eq + Hash>(
+        self,
+        mut key_fn: impl FnMut(&Self::Item) -> K,
+    ) -> IntoIter<(K, usize)> {
+        let mut dict: HashMap<K, usize> = HashMap::new();
+        for item in self {
+            let key = key_fn(&item);
+            *dict.entry(key).or_insert(0) += 1;
+        }
+        let res: Vec<_> = dict
+            .into_iter()
+            .collect();
+        res.into_iter()
+    }
+
     fn shuffled<const B: usize, R: Rng<B>>(
         self,
         rand: &mut Rand<R, B>,
@@ -138,6 +153,15 @@ mod test {
         for (key, iter) in vec.into_iter().group(|x| x % 3) {
             let group: Vec<_> = iter.collect();
             assert_eq!(group, expected_res[key]);
+        }
+    }
+
+    #[test]
+    fn test_group_count() {
+        let vec = vec![0, 1, 2, 3, 4, 5, 6, 7, 8];
+        let expected_res = [vec![0, 3, 6], vec![1, 4, 7], vec![2, 5, 8]];
+        for (key, cnt) in vec.into_iter().group_count(|x| x % 3) {
+            assert_eq!(cnt, expected_res[key].len());
         }
     }
 

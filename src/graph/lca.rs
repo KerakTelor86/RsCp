@@ -1,5 +1,5 @@
 use crate::ds::sparsetable::SparseTable;
-use crate::misc::rec_lambda::*;
+use crate::misc::macros::*;
 use std::cmp::min;
 
 pub struct LCA {

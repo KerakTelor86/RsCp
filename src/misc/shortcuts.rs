@@ -15,5 +15,10 @@ mod test {
         let [a, b] = min_max(7, 3);
         assert_eq!(a, 3);
         assert_eq!(b, 7);
+
+        let [a, b] = min_max("asd", "bsd");
+        assert_eq!(a, "asd");
+        assert_eq!(b, "bsd");
     }
+
 }

@@ -76,16 +76,22 @@ macro_rules! with_cout {
             ($d:tt) => {
                 #[allow(unused_macros)]
                 macro_rules! cout_fmt {
+                    ($d fmt:expr) => {
+                        $name.write(&format!($d fmt));
+                    };
                     ($d fmt:expr, $d($d arg:expr),*) => {
                         $name.write(&format!($d fmt, $d($d arg),*));
-                    }
+                    };
                 }
 
                 #[allow(unused_macros)]
                 macro_rules! coutln_fmt {
+                    ($d fmt:expr) => {
+                        $name.write_line(&format!($d fmt));
+                    };
                     ($d fmt:expr, $d($d arg:expr),*) => {
                         $name.write_line(&format!($d fmt, $d($d arg),*));
-                    }
+                    };
                 }
 
                 #[allow(unused_macros)]
@@ -170,7 +176,7 @@ mod test {
 
         cout!("test: ");
         coutln!("newline here");
-        coutln_fmt!("word: {}", word);
+        coutln_fmt!("word: {word}");
         coutln_fmt!("float: {:.04}", float);
 
         let vec = io.writer.into_inner().unwrap();

@@ -4,3 +4,4 @@ pub mod fluent;
 pub mod io;
 pub mod macros;
 pub mod rec_lambda;
+pub mod shortcuts;

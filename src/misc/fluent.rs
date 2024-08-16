@@ -54,9 +54,7 @@ where
             let key = key_fn(&item);
             *dict.entry(key).or_insert(0) += 1;
         }
-        let res: Vec<_> = dict
-            .into_iter()
-            .collect();
+        let res: Vec<_> = dict.into_iter().collect();
         res.into_iter()
     }
 

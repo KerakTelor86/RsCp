@@ -20,5 +20,4 @@ mod test {
         assert_eq!(a, "asd");
         assert_eq!(b, "bsd");
     }
-
 }

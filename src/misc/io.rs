@@ -67,6 +67,10 @@ impl<I: Read, O: Write> FastIO<I, O> {
         self.write(out);
         self.write("\n");
     }
+    
+    pub fn flush(&mut self) {
+        self.writer.flush().expect("Failed to flush");
+    }
 }
 
 #[macro_export]

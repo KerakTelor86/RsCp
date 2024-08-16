@@ -91,18 +91,13 @@ macro_rules! debug {
 pub use debug;
 
 #[macro_export]
-macro_rules! debug_highlight {
-    ($io:ident, $body:block) => {
-        #[cfg(feature = "local")]
-        {
-            $io.write("\u{001b}[32m");
-            $body;
-            $io.write("\u{001b}[0m");
-        }
+macro_rules! dbg_named_str {
+    ($id:ident) => {
+        &format!("[{} = {:?}]", stringify!($id), $id)
     };
 }
 
-pub use debug_highlight;
+pub use dbg_named_str;
 
 #[cfg(test)]
 mod test {
@@ -126,5 +121,11 @@ mod test {
 
         assert_eq!(test_sum_and_set(0), 15);
         assert_eq!(vector, target);
+    }
+
+    #[test]
+    fn test_dbg_named_str() {
+        let arr = [1, 2, 3, 4, 5];
+        assert_eq!(dbg_named_str!(arr), "[arr = [1, 2, 3, 4, 5]]");
     }
 }

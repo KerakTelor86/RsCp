@@ -13,6 +13,9 @@ pub struct FastIO<I: Read, O: Write> {
     writer: BufWriter<O>,
 }
 
+const TERM_COLOR_GREEN: &str = "\u{001b}[32m";
+const TERM_COLOR_RESET: &str = "\u{001b}[0m";
+
 impl<I: Read, O: Write> FastIO<I, O> {
     pub fn new(reader: I, writer: O) -> Self {
         Self {
@@ -67,7 +70,18 @@ impl<I: Read, O: Write> FastIO<I, O> {
         self.write(out);
         self.write("\n");
     }
-    
+
+    pub fn write_debug(&mut self, out: &str) {
+        self.write(TERM_COLOR_GREEN);
+        self.write(out);
+        self.write(TERM_COLOR_RESET);
+    }
+
+    pub fn write_line_debug(&mut self, out: &str) {
+        self.write_debug(out);
+        self.write("\n");
+    }
+
     pub fn flush(&mut self) {
         self.writer.flush().expect("Failed to flush");
     }
@@ -121,6 +135,42 @@ macro_rules! with_cout {
                         coutln_fmt!(to_format!($d($d arg),*), $d($d arg),*);
                     }
                 }
+
+                #[allow(unused_macros)]
+                macro_rules! cout_fmt_debug {
+                    ($d fmt:expr) => {
+                        $name.write_debug(&format!($d fmt));
+                    };
+                    ($d fmt:expr, $d($d arg:expr),*) => {
+                        $name.write_debug(&format!($d fmt, $d($d arg),*));
+                    };
+                }
+
+                #[allow(unused_macros)]
+                macro_rules! coutln_fmt_debug {
+                    ($d fmt:expr) => {
+                        $name.write_line_debug(&format!($d fmt));
+                    };
+                    ($d fmt:expr, $d($d arg:expr),*) => {
+                        $name.write_line_debug(&format!($d fmt, $d($d arg),*));
+                    };
+                }
+
+                #[allow(unused_macros)]
+                macro_rules! coutln_debug {
+                    ($d($d arg:expr),*) => {
+                        coutln_fmt_debug!(
+                            to_format!($d($d arg),*), $d($d arg),*
+                        );
+                    }
+                }
+
+                #[allow(unused_macros)]
+                macro_rules! cout_debug {
+                    ($d($d arg:expr),*) => {
+                        cout_fmt_debug!(to_format!($d($d arg),*), $d($d arg),*);
+                    }
+                }
             }
         }
     }
@@ -132,22 +182,22 @@ pub use with_cout;
 mod test {
     use std::io::BufReader;
     use std::io::{stdin, stdout};
-
+    use crate::dbg_named_str;
     use super::*;
 
     #[test]
     fn test_io() {
         let input = BufReader::new(
             concat!(
-                "69 420\n",
-                "this entire line\n",
-                "420.69 string\n",
-                "3 4\n",
-                "a b c d\n",
-                "e f g h\n",
-                "i j k l\n",
+            "69 420\n",
+            "this entire line\n",
+            "420.69 string\n",
+            "3 4\n",
+            "a b c d\n",
+            "e f g h\n",
+            "i j k l\n",
             )
-            .as_bytes(),
+                .as_bytes(),
         );
         let output = Vec::new();
 
@@ -183,7 +233,30 @@ mod test {
         coutln_fmt!("word: {word}");
         coutln_fmt!("float: {:.04}", float);
 
+        io.flush();
+
         let vec = io.writer.into_inner().unwrap();
         assert_eq!(vec, b"test: newline here\nword: string\nfloat: 420.6900\n");
+    }
+
+    #[test]
+    fn test_debug() {
+        let input = BufReader::new("\n\n1 2 3 4 5".as_bytes());
+        let output = Vec::new();
+
+        let mut io = FastIO::new(input, output);
+        with_cout!(io);
+
+        let arr = io.read_array::<i32, 5>();
+        coutln_debug!(dbg_named_str!(arr));
+
+        let expected = format!(
+            "{}[arr = [1, 2, 3, 4, 5]]{}\n",
+            TERM_COLOR_GREEN,
+            TERM_COLOR_RESET
+        );
+
+        let vec = io.writer.into_inner().unwrap();
+        assert_eq!(vec, expected.as_bytes());
     }
 }

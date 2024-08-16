@@ -1,3 +1,4 @@
+use crate::misc::range::RangeWrapper;
 use std::rc::Rc;
 
 type PstPtr<T> = Option<Rc<PtrStNode<T>>>;
@@ -69,7 +70,8 @@ where
         }
     }
 
-    pub fn query(&self, left: usize, right: usize) -> T {
+    pub fn query(&self, range: impl RangeWrapper<usize>) -> T {
+        let (left, right) = range.closed_bounds();
         self.query_impl(left, right, &self.root, 0, self.size - 1)
     }
 
@@ -191,7 +193,7 @@ mod test {
         for i in 0..data.len() {
             for j in i..data.len() {
                 let sum: i32 = data[i..=j].iter().sum();
-                assert_eq!(sum, seg_tree.query(i, j));
+                assert_eq!(sum, seg_tree.query(i..=j));
             }
         }
     }
@@ -210,7 +212,7 @@ mod test {
             for i in 0..data.len() {
                 for j in i..data.len() {
                     let sum: i32 = data[i..=j].iter().sum();
-                    assert_eq!(sum, seg_tree.query(i, j));
+                    assert_eq!(sum, seg_tree.query(i..=j));
                 }
             }
         }
@@ -220,16 +222,16 @@ mod test {
     fn test_big_range() {
         const SIZE: usize = 1usize << 60;
         let mut seg_tree = PersistentSegTree::new(SIZE, 0, |a, b| a + b);
-        assert_eq!(seg_tree.query(0, SIZE - 1), 0);
+        assert_eq!(seg_tree.query(0..SIZE), 0);
 
         seg_tree = seg_tree.set(0, 100);
         seg_tree = seg_tree.set(998244353, 69);
         seg_tree = seg_tree.set(SIZE - 3, 420);
 
-        assert_eq!(seg_tree.query(0, 998244352), 100);
-        assert_eq!(seg_tree.query(1, 998244353), 69);
-        assert_eq!(seg_tree.query(0, 998244353), 169);
-        assert_eq!(seg_tree.query(0, SIZE - 1), 589);
+        assert_eq!(seg_tree.query(0..=998244352), 100);
+        assert_eq!(seg_tree.query(1..=998244353), 69);
+        assert_eq!(seg_tree.query(0..=998244353), 169);
+        assert_eq!(seg_tree.query(0..SIZE), 589);
     }
 
     #[test]
@@ -256,7 +258,7 @@ mod test {
             for i in 0..seg_tree.len() {
                 for j in i..seg_tree.len() {
                     let sum: i32 = data[i..=j].iter().sum();
-                    assert_eq!(sum, seg_tree.query(i, j));
+                    assert_eq!(sum, seg_tree.query(i..=j));
                 }
             }
         }

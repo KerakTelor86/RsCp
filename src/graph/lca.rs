@@ -23,24 +23,26 @@ impl LCA {
         let mut level = vec![0; num_vertices];
         let mut order = Vec::new();
 
-        let mut dfs = rec_lambda!(
-            |rec: Self, pos: usize, last: usize, depth: usize| -> () {
-                t_in[pos] = order.len();
-                t_out[pos] = order.len();
-                level[pos] = depth;
-                order.push(pos);
+        let mut dfs = rec_lambda!(|rec: Self,
+                                   pos: usize,
+                                   last: usize,
+                                   depth: usize|
+         -> () {
+            t_in[pos] = order.len();
+            t_out[pos] = order.len();
+            level[pos] = depth;
+            order.push(pos);
 
-                for &child in &adj_list[pos] {
-                    if child == last {
-                        continue;
-                    }
-                    rec(child, pos, depth + 1);
-
-                    t_out[pos] = order.len();
-                    order.push(pos);
+            for &child in &adj_list[pos] {
+                if child == last {
+                    continue;
                 }
+                rec(child, pos, depth + 1);
+
+                t_out[pos] = order.len();
+                order.push(pos);
             }
-        );
+        });
         dfs(root, num_vertices, 0);
 
         let level_iter: Vec<_> = order.iter().map(|&x| level[x]).collect();
@@ -60,9 +62,9 @@ impl LCA {
         let l = self.t_in[u];
         let r = self.t_out[v];
         let (lca_level, lca) = if l <= r {
-            self.sparse.query(l, r)
+            self.sparse.query(l..=r)
         } else {
-            self.sparse.query(r, l)
+            self.sparse.query(r..=l)
         };
         (lca, self.level[u] + self.level[v] - lca_level * 2)
     }

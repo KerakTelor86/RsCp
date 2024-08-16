@@ -1,4 +1,5 @@
 use super::util::*;
+use crate::misc::range::RangeWrapper;
 
 #[derive(Debug)]
 pub struct LazySegTree<T: Clone, U: Clone + Eq, F, L, M>
@@ -72,11 +73,13 @@ where
         self.set_impl(pos, value, 0, 0, self.size - 1)
     }
 
-    pub fn update(&mut self, left: usize, right: usize, lazy: U) {
+    pub fn update(&mut self, range: impl RangeWrapper<usize>, lazy: U) {
+        let (left, right) = range.closed_bounds();
         self.update_impl(left, right, lazy, 0, 0, self.size - 1)
     }
 
-    pub fn query(&mut self, left: usize, right: usize) -> T {
+    pub fn query(&mut self, range: impl RangeWrapper<usize>) -> T {
+        let (left, right) = range.closed_bounds();
         self.query_impl(left, right, 0, 0, self.size - 1)
     }
 
@@ -231,7 +234,7 @@ mod test {
         for i in 0..data.len() {
             for j in i..data.len() {
                 let sum: i32 = data[i..=j].iter().sum();
-                assert_eq!(sum, seg_tree.query(i, j));
+                assert_eq!(sum, seg_tree.query(i..=j));
             }
         }
     }
@@ -261,12 +264,12 @@ mod test {
             for i in l..=r {
                 data[i] += val;
             }
-            seg_tree.update(l, r, val);
+            seg_tree.update(l..=r, val);
 
             for i in 0..data.len() {
                 for j in i..data.len() {
                     let sum: i32 = data[i..=j].iter().sum();
-                    assert_eq!(sum, seg_tree.query(i, j));
+                    assert_eq!(sum, seg_tree.query(i..=j));
                 }
             }
         }

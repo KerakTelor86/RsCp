@@ -1,3 +1,4 @@
+use crate::misc::range::RangeWrapper;
 use std::ops::*;
 
 pub trait BinarySearchable:
@@ -24,10 +25,10 @@ impl<
 }
 
 pub fn tf_last_t<T: BinarySearchable>(
-    range: Range<T>,
+    range: impl RangeWrapper<T>,
     predicate: impl Fn(T) -> bool,
 ) -> Option<T> {
-    let Range { start, end } = range;
+    let (start, end) = range.half_open_bounds();
     if !predicate(start) {
         return None;
     }
@@ -44,10 +45,10 @@ pub fn tf_last_t<T: BinarySearchable>(
 }
 
 pub fn tf_first_f<T: BinarySearchable>(
-    range: Range<T>,
+    range: impl RangeWrapper<T>,
     predicate: impl Fn(T) -> bool,
 ) -> Option<T> {
-    let Range { start, end } = range;
+    let (start, end) = range.half_open_bounds();
     match tf_last_t(range, predicate) {
         None => Some(start),
         Some(x) => {
@@ -61,14 +62,14 @@ pub fn tf_first_f<T: BinarySearchable>(
 }
 
 pub fn ft_last_f<T: BinarySearchable>(
-    range: Range<T>,
+    range: impl RangeWrapper<T>,
     predicate: impl Fn(T) -> bool,
 ) -> Option<T> {
     tf_last_t(range, |x| !predicate(x))
 }
 
 pub fn ft_first_t<T: BinarySearchable>(
-    range: Range<T>,
+    range: impl RangeWrapper<T>,
     predicate: impl Fn(T) -> bool,
 ) -> Option<T> {
     tf_first_f(range, |x| !predicate(x))

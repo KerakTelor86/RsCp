@@ -1,4 +1,5 @@
 use super::util::*;
+use crate::misc::range::RangeWrapper;
 
 #[derive(Debug)]
 pub struct SegTree<T, F>
@@ -47,7 +48,8 @@ where
         self.update_impl(pos, value, 0, 0, self.size - 1)
     }
 
-    pub fn query(&self, left: usize, right: usize) -> T {
+    pub fn query(&self, range: impl RangeWrapper<usize>) -> T {
+        let (left, right) = range.closed_bounds();
         self.query_impl(left, right, 0, 0, self.size - 1)
     }
 
@@ -153,7 +155,7 @@ mod test {
         for i in 0..data.len() {
             for j in i..data.len() {
                 let sum: i32 = data[i..=j].iter().sum();
-                assert_eq!(sum, seg_tree.query(i, j));
+                assert_eq!(sum, seg_tree.query(i..=j));
             }
         }
     }
@@ -172,7 +174,7 @@ mod test {
             for i in 0..data.len() {
                 for j in i..data.len() {
                     let sum: i32 = data[i..=j].iter().sum();
-                    assert_eq!(sum, seg_tree.query(i, j));
+                    assert_eq!(sum, seg_tree.query(i..=j));
                 }
             }
         }

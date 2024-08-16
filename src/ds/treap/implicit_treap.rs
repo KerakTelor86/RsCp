@@ -1,8 +1,8 @@
+use crate::misc::range::RangeWrapper;
 use crate::rand::rand::Rand;
 use crate::rand::rng::wyrand::WyRand;
 use crate::rand::traits::RandNext;
 use std::cell::RefCell;
-use std::ops::Range;
 use std::rc::Rc;
 use std::vec::IntoIter;
 
@@ -89,12 +89,13 @@ impl<T: Clone, F: Fn(T, T) -> T, R: RandNext<u32>> ImplicitTreap<T, F, R> {
         self.root = self.node_merge(self.node_merge(left, Some(target)), right);
     }
 
-    pub fn query(&mut self, range: Range<usize>) -> T {
-        assert!(range.end <= self.len());
+    pub fn query(&mut self, range: impl RangeWrapper<usize>) -> T {
+        let (start, end) = range.half_open_bounds();
+        assert!(end <= self.len());
         let root = self.root.take();
 
-        let (left, right) = self.node_split(root, range.start);
-        let (target, right) = self.node_split(right, range.end - range.start);
+        let (left, right) = self.node_split(root, start);
+        let (target, right) = self.node_split(right, end - start);
 
         let target = target.unwrap();
         let ret = target.cumulative_val.clone();
@@ -134,25 +135,28 @@ impl<T: Clone, F: Fn(T, T) -> T, R: RandNext<u32>> ImplicitTreap<T, F, R> {
         self.root = self.node_merge(self.node_merge(left, Some(target)), right);
     }
 
-    pub fn remove(&mut self, range: Range<usize>) {
-        assert!(range.end <= self.len());
+    pub fn remove(&mut self, range: impl RangeWrapper<usize>) {
+        let (start, end) = range.half_open_bounds();
+
+        assert!(end <= self.len());
         let root = self.root.take();
 
-        let (left, right) = self.node_split(root, range.start);
-        let (target, right) = self.node_split(right, range.end - range.start);
+        let (left, right) = self.node_split(root, start);
+        let (target, right) = self.node_split(right, end - start);
 
         drop(target);
 
         self.root = self.node_merge(left, right);
     }
 
-    pub fn reverse(&mut self, range: Range<usize>) {
-        assert!(range.end <= self.len());
+    pub fn reverse(&mut self, range: impl RangeWrapper<usize>) {
+        let (start, end) = range.half_open_bounds();
+
+        assert!(end <= self.len());
         let root = self.root.take();
 
-        let (left, right) = self.node_split(root, range.start);
-        let (mut target, right) =
-            self.node_split(right, range.end - range.start);
+        let (left, right) = self.node_split(root, start);
+        let (mut target, right) = self.node_split(right, end - start);
 
         if let Some(target) = &mut target {
             target.flip = !target.flip;

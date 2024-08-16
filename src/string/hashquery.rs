@@ -1,6 +1,6 @@
 use super::hash::*;
 use crate::misc::fluent::FluentIterator;
-use std::ops::Range;
+use crate::misc::range::RangeWrapper;
 
 pub struct HashRangeQuery<'a, const N: usize, H: RollingHasher<N>> {
     prefix_hash: Vec<RollingHash<'a, N, H>>,
@@ -17,8 +17,8 @@ impl<'a, const N: usize, H: RollingHasher<N>> HashRangeQuery<'a, N, H> {
         }
     }
 
-    pub fn query(&self, range: Range<usize>) -> RollingHash<N, H> {
-        let Range { start, end } = range;
+    pub fn query(&self, range: impl RangeWrapper<usize>) -> RollingHash<N, H> {
+        let (start, end) = range.half_open_bounds();
         self.prefix_hash[end] - self.prefix_hash[start]
     }
 }
@@ -41,12 +41,18 @@ impl<'a, const N: usize, H: RollingHasher<N>>
         }
     }
 
-    pub fn query_forward(&self, range: Range<usize>) -> RollingHash<N, H> {
+    pub fn query_forward(
+        &self,
+        range: impl RangeWrapper<usize>,
+    ) -> RollingHash<N, H> {
         self.forward.query(range)
     }
 
-    pub fn query_backward(&self, range: Range<usize>) -> RollingHash<N, H> {
-        let Range { start, end } = range;
+    pub fn query_backward(
+        &self,
+        range: impl RangeWrapper<usize>,
+    ) -> RollingHash<N, H> {
+        let (start, end) = range.half_open_bounds();
         let right = self.len - start;
         let left = self.len - end;
         self.backward.query(left..right)

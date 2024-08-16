@@ -1,3 +1,5 @@
+use crate::misc::range::RangeWrapper;
+
 #[derive(Debug)]
 pub struct SparseTable<T, F>
 where
@@ -43,7 +45,8 @@ where
         }
     }
 
-    pub fn query(&self, left: usize, right: usize) -> T {
+    pub fn query(&self, range: impl RangeWrapper<usize>) -> T {
+        let (left, right) = range.closed_bounds();
         let lg = (63 - (right - left + 1).leading_zeros()) as usize;
         (self.operation)(
             self.store[lg][left].clone(),
@@ -91,7 +94,7 @@ mod test {
         for l in 0..LEN {
             for r in l..LEN {
                 assert_eq!(
-                    sparse.query(l, r),
+                    sparse.query(l..=r),
                     *vec[l..r + 1].iter().max().unwrap()
                 );
             }

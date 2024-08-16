@@ -1,11 +1,11 @@
 use std::rc::Rc;
 
-type Ptr<T> = Option<Rc<PtrStNode<T>>>;
+type PstPtr<T> = Option<Rc<PtrStNode<T>>>;
 
 #[derive(Clone)]
 struct PtrStNode<T: Clone> {
-    left: Ptr<T>,
-    right: Ptr<T>,
+    left: PstPtr<T>,
+    right: PstPtr<T>,
     value: T,
 }
 
@@ -27,7 +27,7 @@ where
     size: usize,
     nil: T,
     operation: Rc<F>,
-    root: Ptr<T>,
+    root: PstPtr<T>,
 }
 
 impl<T: Clone, F> PersistentSegTree<T, F>
@@ -73,14 +73,14 @@ where
         self.query_impl(left, right, &self.root, 0, self.size - 1)
     }
 
-    fn get_value(&self, ptr: &Ptr<T>) -> T {
+    fn get_value(&self, ptr: &PstPtr<T>) -> T {
         match ptr {
             Some(node) => node.value.clone(),
             None => self.nil.clone(),
         }
     }
 
-    fn deref_or_default(&self, ptr: Ptr<T>) -> Rc<PtrStNode<T>> {
+    fn deref_or_default(&self, ptr: PstPtr<T>) -> Rc<PtrStNode<T>> {
         match ptr {
             Some(x) => x,
             None => Rc::new(PtrStNode::new(self.nil.clone())),
@@ -91,10 +91,10 @@ where
         &self,
         u: usize,
         w: T,
-        cur: Ptr<T>,
+        cur: PstPtr<T>,
         l: usize,
         r: usize,
-    ) -> Ptr<T> {
+    ) -> PstPtr<T> {
         if u > r || u < l {
             return cur;
         }
@@ -121,10 +121,10 @@ where
         &self,
         u: usize,
         w: T,
-        cur: Ptr<T>,
+        cur: PstPtr<T>,
         l: usize,
         r: usize,
-    ) -> Ptr<T> {
+    ) -> PstPtr<T> {
         if u > r || u < l {
             return cur;
         }
@@ -151,7 +151,7 @@ where
         &self,
         u: usize,
         v: usize,
-        cur: &Ptr<T>,
+        cur: &PstPtr<T>,
         l: usize,
         r: usize,
     ) -> T {

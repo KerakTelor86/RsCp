@@ -1,8 +1,8 @@
-type Ptr<T> = Option<Box<DynStNode<T>>>;
+type DynStPtr<T> = Option<Box<DynStNode<T>>>;
 
 struct DynStNode<T: Clone> {
-    left: Ptr<T>,
-    right: Ptr<T>,
+    left: DynStPtr<T>,
+    right: DynStPtr<T>,
     value: T,
 }
 
@@ -23,7 +23,7 @@ where
     size: usize,
     nil: T,
     operation: F,
-    root: Ptr<T>,
+    root: DynStPtr<T>,
 }
 
 impl<T: Clone, F> DynamicSegTree<T, F>
@@ -57,14 +57,14 @@ where
         self.query_impl(left, right, &self.root, 0, self.size - 1)
     }
 
-    fn get_value(&self, ptr: &Ptr<T>) -> T {
+    fn get_value(&self, ptr: &DynStPtr<T>) -> T {
         match ptr {
             Some(node) => node.value.clone(),
             None => self.nil.clone(),
         }
     }
 
-    fn deref_or_default(&self, ptr: Ptr<T>) -> Box<DynStNode<T>> {
+    fn deref_or_default(&self, ptr: DynStPtr<T>) -> Box<DynStNode<T>> {
         match ptr {
             Some(x) => x,
             None => Box::new(DynStNode::new(self.nil.clone())),
@@ -75,10 +75,10 @@ where
         &self,
         u: usize,
         w: T,
-        cur: Ptr<T>,
+        cur: DynStPtr<T>,
         l: usize,
         r: usize,
-    ) -> Ptr<T> {
+    ) -> DynStPtr<T> {
         if u > r || u < l {
             return cur;
         }
@@ -104,10 +104,10 @@ where
         &self,
         u: usize,
         w: T,
-        cur: Ptr<T>,
+        cur: DynStPtr<T>,
         l: usize,
         r: usize,
-    ) -> Ptr<T> {
+    ) -> DynStPtr<T> {
         if u > r || u < l {
             return cur;
         }
@@ -133,7 +133,7 @@ where
         &self,
         u: usize,
         v: usize,
-        cur: &Ptr<T>,
+        cur: &DynStPtr<T>,
         l: usize,
         r: usize,
     ) -> T {

@@ -4,6 +4,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 // Refs:
 // https://github.com/lemire/testingRNG/blob/master/source/wyrand.h
 // https://github.com/wangyi-fudan/wyhash/tree/master
+#[derive(Copy, Clone)]
 pub struct WyRand {
     state: u64,
 }

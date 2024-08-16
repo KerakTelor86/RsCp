@@ -1,7 +1,8 @@
-use crate::rand::rng::wyrand::WyRand;
 use super::rng::traits::Rng;
 use super::traits::{RandNext, RandNextRanged};
+use crate::rand::rng::wyrand::WyRand;
 
+#[derive(Copy, Clone)]
 pub struct Rand<R, const B: usize>
 where
     R: Rng<B>,

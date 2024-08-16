@@ -173,31 +173,31 @@ macro_rules! with_cout {
                 }
             }
         }
-    }
+    };
 }
 
 pub use with_cout;
 
 #[cfg(test)]
 mod test {
+    use super::*;
+    use crate::dbg_named_str;
     use std::io::BufReader;
     use std::io::{stdin, stdout};
-    use crate::dbg_named_str;
-    use super::*;
 
     #[test]
     fn test_io() {
         let input = BufReader::new(
             concat!(
-            "69 420\n",
-            "this entire line\n",
-            "420.69 string\n",
-            "3 4\n",
-            "a b c d\n",
-            "e f g h\n",
-            "i j k l\n",
+                "69 420\n",
+                "this entire line\n",
+                "420.69 string\n",
+                "3 4\n",
+                "a b c d\n",
+                "e f g h\n",
+                "i j k l\n",
             )
-                .as_bytes(),
+            .as_bytes(),
         );
         let output = Vec::new();
 
@@ -252,8 +252,7 @@ mod test {
 
         let expected = format!(
             "{}[arr = [1, 2, 3, 4, 5]]{}\n",
-            TERM_COLOR_GREEN,
-            TERM_COLOR_RESET
+            TERM_COLOR_GREEN, TERM_COLOR_RESET
         );
 
         let vec = io.writer.into_inner().unwrap();

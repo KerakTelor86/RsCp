@@ -2,14 +2,14 @@ use crate::misc::fluent::FluentIteratorOrd;
 
 // Ref:
 // https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
-pub fn next_permutation<T: Ord>(slice: &mut [T]) -> bool {
-    let n = slice.len();
-    let Some(k) = (0..n - 1).filter(|&i| slice[i] < slice[i + 1]).last() else {
+pub fn next_permutation<T: Ord>(s: &mut [T]) -> bool {
+    let n = s.len();
+    let Some(k) = (0..n - 1).rev().filter(|&i| s[i] < s[i + 1]).next() else {
         return false;
     };
-    let l = (k + 1..n).filter(|&i| slice[k] < slice[i]).last().unwrap();
-    slice.swap(k, l);
-    slice[k + 1..n].reverse();
+    let l = (k + 1..n).rev().filter(|&i| s[k] < s[i]).next().unwrap();
+    s.swap(k, l);
+    s[k + 1..n].reverse();
     true
 }
 

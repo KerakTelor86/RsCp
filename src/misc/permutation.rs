@@ -4,6 +4,9 @@ use crate::misc::fluent::FluentIteratorOrd;
 // https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
 pub fn next_permutation<T: Ord>(s: &mut [T]) -> bool {
     let n = s.len();
+    if n <= 1 {
+        return false;
+    }
     let Some(k) = (0..n - 1).rev().filter(|&i| s[i] < s[i + 1]).next() else {
         return false;
     };
@@ -79,5 +82,13 @@ mod test {
                 expected_perm[idx]
             );
         }
+    }
+
+    #[test]
+    fn test_not_possible() {
+        let mut vec = vec![1];
+        assert!(!next_permutation(&mut vec));
+        vec.clear();
+        assert!(!next_permutation(&mut vec));
     }
 }

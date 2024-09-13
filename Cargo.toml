@@ -6,7 +6,7 @@ rust-version = "1.70.0"
 
 [features]
 local = []
-benchmark = []
+#benchmark = []
 
-[dev-dependencies]
-microbench = "0.5"
+#[dev-dependencies]
+#microbench = "0.5"

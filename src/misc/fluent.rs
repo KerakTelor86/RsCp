@@ -95,6 +95,13 @@ where
         vec.sort();
         vec.into_iter()
     }
+
+    fn unique(self) -> IntoIter<Self::Item> {
+        let mut vec: Vec<_> = self.collect();
+        vec.sort();
+        vec.dedup();
+        vec.into_iter()
+    }
 }
 
 impl<Item: Clone, Iter> FluentIterator for Iter
@@ -185,5 +192,12 @@ mod test {
         let mut rand = Rand::new(WyRand::new(420691337));
         let res: Vec<_> = vec.clone().into_iter().shuffled(&mut rand).collect();
         assert_ne!(res, vec);
+    }
+
+    #[test]
+    fn test_unique() {
+        let vec = vec![2, 3, 1, 2, 2, 2, 1, 1, 1, 3, 1, 2, 3, 2, 1, 3, 4, 5, 4];
+        let res: Vec<_> = vec.into_iter().unique().collect();
+        assert_eq!(res, vec![1, 2, 3, 4, 5]);
     }
 }

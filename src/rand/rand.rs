@@ -86,7 +86,7 @@ macro_rules! impl_int_rand {
 
                     loop {
                         let x: $type = self.next();
-                        if (0..=limit).contains(&x) {
+                        if (0..limit).contains(&x) {
                             return low + (x / buckets);
                         }
                     }
@@ -147,6 +147,18 @@ mod test {
     use crate::rand::rng::wyrand::WyRand;
 
     use super::*;
+
+    #[test]
+    fn test_limits() {
+        const TIMES: usize = 10000;
+
+        let mut rand = Rand::new(WyRand::new(420691337));
+
+        for _ in 0..TIMES {
+            let val = rand.next_ranged(0u8, 25u8);
+            assert!((0..=25).contains(&val));
+        }
+    }
 
     #[test]
     fn test_distribution() {
